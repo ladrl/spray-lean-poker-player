@@ -26,7 +26,7 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
 
 
 // this trait defines our service behavior independently from the service actor
-trait MyService extends HttpService {
+trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
 

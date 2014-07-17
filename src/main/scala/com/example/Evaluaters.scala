@@ -6,10 +6,17 @@ trait CardEvaluater {
   def evaluate(cards: List[Card]): List[Int]
 }
 
-class HighCardEvaluater extends CardEvaluater {
+class PairEvaluater extends CardEvaluater {
   
   override def evaluate(cards: List[Card]):List[Int] = {
     0::cards.map(card => CardEvaluater.getValue(card.rank)).sorted(Ordering[Int].reverse)
+  }
+}
+
+class HighCardEvaluater extends CardEvaluater {
+  
+  override def evaluate(cards: List[Card]):List[Int] = {
+    1::cards.map(card => CardEvaluater.getValue(card.rank)).sorted(Ordering[Int].reverse)
   }
 }
 
