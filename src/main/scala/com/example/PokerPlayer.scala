@@ -27,6 +27,7 @@ trait MyService extends HttpService {
       get {
         parameter('action) {
           case "check" => complete("We're here!")
+          case "version" => complete("0.1.0")
           case _ => complete("huh?")
         }
       }
