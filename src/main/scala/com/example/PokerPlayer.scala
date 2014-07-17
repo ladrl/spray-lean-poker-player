@@ -35,7 +35,9 @@ trait PokerPlayerTrait extends HttpService { self: Actor =>
     get {
       parameter('action) {
         case "check" => complete("We're here!")
+        case "version" => complete("0.1.0")
         case "bet_request" => bet_request
+        case "showdown" => showdown 
         case _ => complete("huh?")
       }
     }
@@ -44,6 +46,12 @@ trait PokerPlayerTrait extends HttpService { self: Actor =>
   val bet_request = {
     parameter('game_state) { game_state =>
     complete("0")
+    }
+  }
+  
+  val showdown = {
+    parameter('game_state) { game_state =>
+    complete("bang")
     }
   }
 }
