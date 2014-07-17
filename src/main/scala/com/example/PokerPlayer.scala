@@ -32,6 +32,8 @@ trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
 
+  val section = "(.+)=(.+)".r
+
   val myRoute =
     path("shutdown") {
       complete {
@@ -39,22 +41,34 @@ trait PokerPlayerTrait extends HttpService {
         "ookay, going down"
       }
     } ~ path("") {
-      formField('action) {
-        case "check" => complete("We're here!")
-        case "version" => complete("0.1.0")
-        case "bet_request" => bet_request
-        case "showdown" => showdown
-        case _ => complete("huh?")
+      entity(as[String]) { request =>
+        val parts = request.split("&")
+        parts(0) match {
+          case section("action", action) => action match {
+            case "check" => complete("We're here!")
+            case "version" => complete("0.1.0")
+            case "bet_request" => bet_request(parts(1))
+            case "showdown" => showdown
+            case _ => complete("huh?")
+          }
+        }
       }
     }
-    
+
+  import spray.json._
   import CardDeserializer._
 
-  val bet_request = {
-    formFields('game_state) { game_state: String =>
-      println(game_state)
+  def bet_request(game_state: String) = {
+    val parts = game_state.split("=", 2)
+    println(parts)
+    if (parts(0) == "game_state") {
+      val s = JsString(parts(1))
+      val game_state =  s.convertTo[GameState]
+
+      complete("got it")
+    } else {
       complete("0")
-    } ~ complete("0")
+    }
   }
 
   val showdown = {
