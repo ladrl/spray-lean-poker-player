@@ -20,16 +20,29 @@ class MyServiceActor extends Actor with MyService {
 }
 
 // this trait defines our service behavior independently from the service actor
-trait MyService extends HttpService {
+trait MyService extends HttpService { self: Actor =>
 
   val myRoute =
-    path("") {
-      get {
-        parameter('action) {
-          case "check" => complete("We're here!")
-          case "version" => complete("0.1.0")
-          case _ => complete("huh?")
-        }
+    path("shutdown") {
+	  complete{
+		context.system.shutdown()
+		
+	    "ookay, going down"
+	  }
+    } ~ path("") {
+    get {
+      parameter('action) {
+        case "check" => complete("We're here!")
+        case "version" => complete("0.1.0")
+        case "bet_request" => bet_request
+        case _ => complete("huh?")
       }
     }
+  }
+
+  val bet_request = {
+    parameter('game_state) { game_state =>
+      complete("got it")
+    }
+  }
 }
