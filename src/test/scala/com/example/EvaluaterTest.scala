@@ -49,5 +49,15 @@ class EvaluaterTest extends FlatSpec with Matchers {
     val cards = List(new Card("4", "spades"), new Card("4", "spades"), new Card("A", "spades"))
     new TwoPairEvaluater().evaluate(cards) should equal(List(0))
   }
+  
+  "TrippleEvaluater" should "find tripple" in {
+    val cards = List(new Card("4", "spades"), new Card("4", "spades"), new Card("4", "spades"), new Card("A", "spades"))
+    new TrippleEvaluater().evaluate(cards) should equal(List(4, 4, 14))
+  }
+  
+  "TrippleEvaluater" should "return 0 when pair" in {
+    val cards = List(new Card("4", "spades"), new Card("4", "spades"), new Card("A", "spades"))
+    new TrippleEvaluater().evaluate(cards) should equal(List(0))
+  }
 
 }
