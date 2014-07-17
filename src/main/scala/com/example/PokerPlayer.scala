@@ -13,8 +13,8 @@ import scala.util.Random
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
 class PokerPlayerActor extends Actor with PokerPlayerTrait {
-  
-  println("Version: "+getVersion)
+
+  println("Version: " + getVersion)
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -28,7 +28,7 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
   def shutdown() = {
     context.system.shutdown()
   }
-  
+
   def getVersion() = {
     "0.2.0"
   }
@@ -38,8 +38,10 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
 trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
-  
+
   def getVersion(): String
+
+  val section = "(.+)=(.+)".r
 
   val myRoute =
     path("shutdown") {
@@ -48,23 +50,33 @@ trait PokerPlayerTrait extends HttpService {
         "ookay, going down"
       }
     } ~ path("") {
-      formField('action) {
-        case "check" => complete("We're here!")
-        case "version" => complete(getVersion)
-        case "bet_request" => bet_request
-        case "showdown" => showdown
-        case _ => complete("huh?")
+      entity(as[String]) { request =>
+        val parts = request.split("&")
+        parts(0) match {
+          case section("action", action) => action match {
+            case "check" => complete("We're here!")
+            case "version" => complete(getVersion())
+            case "bet_request" => bet_request(parts(1))
+            case "showdown" => showdown
+            case _ => complete("huh?")
+          }
+        }
       }
     }
-    
+
+  import spray.json._
   import CardDeserializer._
 
-  val bet_request = {
-    formFields('game_state) { game_state: String =>
-      println(game_state)
-      val rand=Random.nextInt()
-      complete(math.abs(rand).toString)
-    } ~ complete("0")
+  def bet_request(game_state: String) = {
+    val parts = game_state.split("=", 2)
+    println(parts)
+    if (parts(0) == "game_state") {
+      val s = JsString(parts(1))
+      val game_state = s.convertTo[GameState]
+    }
+    val rand = Random.nextInt()
+
+    complete(math.abs(rand).toString)
   }
 
   val showdown = {
