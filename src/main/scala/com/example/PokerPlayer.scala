@@ -30,7 +30,7 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
   }
 
   def getVersion() = {
-    "0.2.0"
+    "0.3.0"
   }
 }
 
