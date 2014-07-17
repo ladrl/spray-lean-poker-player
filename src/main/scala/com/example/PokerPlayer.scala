@@ -5,9 +5,10 @@ import spray.routing._
 import spray.http._
 import MediaTypes._
 import spray.json._
-import DefaultJsonProtocol._ // !!! IMPORTANT, else `convertTo` and `toJson` won't work correctly
+import DefaultJsonProtocol._
 import spray.routing.directives._
 import spray.httpx.SprayJsonSupport._
+import scala.util.Random
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -41,7 +42,7 @@ trait PokerPlayerTrait extends HttpService {
     } ~ path("") {
       formField('action) {
         case "check" => complete("We're here!")
-        case "version" => complete("0.1.0")
+        case "version" => complete("0.2.0")
         case "bet_request" => bet_request
         case "showdown" => showdown
         case _ => complete("huh?")
@@ -53,7 +54,8 @@ trait PokerPlayerTrait extends HttpService {
   val bet_request = {
     formFields('game_state) { game_state: String =>
       println(game_state)
-      complete("0")
+      val rand=Random.nextInt()
+      complete(math.abs(rand).toString)
     } ~ complete("0")
   }
 
