@@ -13,6 +13,8 @@ import scala.util.Random
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
 class PokerPlayerActor extends Actor with PokerPlayerTrait {
+  
+  println("Version: "+getVersion)
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -26,12 +28,18 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
   def shutdown() = {
     context.system.shutdown()
   }
+  
+  def getVersion() = {
+    "0.2.0"
+  }
 }
 
 // this trait defines our service behavior independently from the service actor
 trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
+  
+  def getVersion(): String
 
   val myRoute =
     path("shutdown") {
@@ -42,7 +50,7 @@ trait PokerPlayerTrait extends HttpService {
     } ~ path("") {
       formField('action) {
         case "check" => complete("We're here!")
-        case "version" => complete("0.2.0")
+        case "version" => complete(getVersion)
         case "bet_request" => bet_request
         case "showdown" => showdown
         case _ => complete("huh?")

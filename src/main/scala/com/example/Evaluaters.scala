@@ -5,13 +5,33 @@ trait CardEvaluater {
   def evaluate(cards: List[Card]): List[Int]
 }
 
+class TwoPairEvaluater extends CardEvaluater {
+
+  override def evaluate(cards: List[Card]): List[Int] = {
+    val cardOccurrences = cards.map(card => CardEvaluater.getValue(card.rank)).foldLeft(Map[Int, Int]() withDefaultValue 0) {
+      (m, x) => m + (x -> (1 + m(x)))
+    }
+    val pairs = cardOccurrences.filter(_._2 == 2).keys.toList.sorted(Ordering[Int].reverse)
+    if (pairs.length == 2) {
+      (3 :: pairs) ++ cardOccurrences.filter(_._2 == 1).keys.toList.sorted(Ordering[Int].reverse)
+    } else {
+      List(0)
+    }
+  }
+}
+
 class PairEvaluater extends CardEvaluater {
 
   override def evaluate(cards: List[Card]): List[Int] = {
     val cardOccurrences = cards.map(card => CardEvaluater.getValue(card.rank)).foldLeft(Map[Int, Int]() withDefaultValue 0) {
       (m, x) => m + (x -> (1 + m(x)))
     }
-    0 :: cards.map(card => CardEvaluater.getValue(card.rank)).sorted(Ordering[Int].reverse)
+    val pairs = cardOccurrences.filter(_._2 == 2).keys.toList.sorted(Ordering[Int].reverse)
+    if (pairs.length == 1) {
+      (2 :: pairs) ++ cardOccurrences.filter(_._2 == 1).keys.toList.sorted(Ordering[Int].reverse)
+    } else {
+      List(0)
+    }
   }
 }
 

@@ -10,6 +10,10 @@ class MyServiceSpec extends Specification with Specs2RouteTest with PokerPlayerT
   def shutdown() = {
   }
   
+  def getVersion() = {
+    "test"
+  }
+  
   def actorRefFactory = system
   
   "MyService" should {
