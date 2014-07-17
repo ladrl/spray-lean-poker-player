@@ -18,6 +18,7 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
     "org.specs2"          %%  "specs2"        % "2.2.3" % "test",
-    "io.spray" 			  %%  "spray-json"    % "1.2.6"
+    "io.spray" 			  %%  "spray-json"    % "1.2.6",
+    "org.scalatest"       %% "scalatest"      % "2.2.0" % "test"
   )
 }
