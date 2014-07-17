@@ -17,36 +17,42 @@ class MyServiceActor extends Actor with MyService {
   // other things here, like request stream processing
   // or timeout handling
   def receive = runRoute(myRoute)
+
+  def shutdown() = {
+    context.system.shutdown()
+  }
 }
 
 // this trait defines our service behavior independently from the service actor
-trait MyService extends HttpService { self: Actor =>
+trait MyService extends HttpService {
+
+  def shutdown()
 
   val myRoute =
     path("shutdown") {
-	  complete{
-		context.system.shutdown()
-		
-	    "ookay, going down"
-	  }
+      complete {
+    	  shutdown()
+        "ookay, going down"
+      }
     } ~ path("") {
-    get {
-      parameter('action) {
-        case "check" => complete("We're here!")
-        case "version" => complete("0.1.0")
-        case "bet_request" => bet_request
-        case "showdown" => showdown 
-        case _ => complete("huh?")
+      get {
+        parameter('action) {
+          case "check" => complete("We're here!")
+          case "version" => complete("0.1.0")
+          case "bet_request" => bet_request
+          case "showdown" => showdown
+          case _ => complete("huh?")
+        }
       }
     }
-  }
 
   val bet_request = {
     parameter('game_state) { game_state =>
+      println(game_state)
       complete("0")
     }
   }
-  
+
   val showdown = {
     parameter('game_state) { game_state =>
       complete("bang")

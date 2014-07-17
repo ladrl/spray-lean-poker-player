@@ -6,6 +6,10 @@ import spray.http._
 import StatusCodes._
 
 class MyServiceSpec extends Specification with Specs2RouteTest with MyService {
+  
+  def shutdown() = {
+  }
+  
   def actorRefFactory = system
   
   "MyService" should {
