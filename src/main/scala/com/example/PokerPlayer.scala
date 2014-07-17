@@ -5,13 +5,16 @@ import spray.routing._
 import spray.http._
 import MediaTypes._
 import spray.json._
-import DefaultJsonProtocol._ // !!! IMPORTANT, else `convertTo` and `toJson` won't work correctly
+import DefaultJsonProtocol._
 import spray.routing.directives._
 import spray.httpx.SprayJsonSupport._
+import scala.util.Random
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
 class PokerPlayerActor extends Actor with PokerPlayerTrait {
+
+  println("Version: " + getVersion)
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -25,12 +28,18 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
   def shutdown() = {
     context.system.shutdown()
   }
+
+  def getVersion() = {
+    "0.2.0"
+  }
 }
 
 // this trait defines our service behavior independently from the service actor
 trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
+
+  def getVersion(): String
 
   val section = "(.+)=(.+)".r
 
@@ -46,7 +55,7 @@ trait PokerPlayerTrait extends HttpService {
         parts(0) match {
           case section("action", action) => action match {
             case "check" => complete("We're here!")
-            case "version" => complete("0.1.0")
+            case "version" => complete(getVersion())
             case "bet_request" => bet_request(parts(1))
             case "showdown" => showdown
             case _ => complete("huh?")
@@ -63,12 +72,11 @@ trait PokerPlayerTrait extends HttpService {
     println(parts)
     if (parts(0) == "game_state") {
       val s = JsString(parts(1))
-      val game_state =  s.convertTo[GameState]
-
-      complete("got it")
-    } else {
-      complete("0")
+      val game_state = s.convertTo[GameState]
     }
+    val rand = Random.nextInt()
+
+    complete(math.abs(rand).toString)
   }
 
   val showdown = {
