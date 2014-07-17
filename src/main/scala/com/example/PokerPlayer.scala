@@ -4,10 +4,11 @@ import akka.actor.Actor
 import spray.routing._
 import spray.http._
 import MediaTypes._
+import sun.org.mozilla.javascript.internal.json.JsonParser
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
-class MyServiceActor extends Actor with MyService {
+class PokerPlayerActor extends Actor with PokerPlayerTrait {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -22,6 +23,7 @@ class MyServiceActor extends Actor with MyService {
     context.system.shutdown()
   }
 }
+
 
 // this trait defines our service behavior independently from the service actor
 trait MyService extends HttpService {
@@ -48,14 +50,13 @@ trait MyService extends HttpService {
 
   val bet_request = {
     parameter('game_state) { game_state =>
-      println(game_state)
-      complete("0")
+    complete("0")
     }
   }
 
   val showdown = {
     parameter('game_state) { game_state =>
-      complete("bang")
+    complete("bang")
     }
   }
 }
