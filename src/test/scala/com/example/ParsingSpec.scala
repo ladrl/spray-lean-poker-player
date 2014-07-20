@@ -1,10 +1,11 @@
-package com.example
+package leanPoker.scalaPlayer
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import spray.json.JsString
 import spray.json._
-import CardDeserializer._
+import domains.Server.CardDeserializer._
+import domains.Server._
 
 class ParsingSpec extends FlatSpec with Matchers {
   "GameState serialization" should

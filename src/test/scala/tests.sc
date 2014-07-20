@@ -41,4 +41,5 @@ object tests {
   gsStr.parseJson.convertTo[GameState]            //> res4: com.example.GameState = GameState(List(Player(name,0,status,0,List(),v
                                                   //| ersion,0)),0,0,0,List(Card(a,b)),0,0)
   
+  val test = "leeaie"
 }

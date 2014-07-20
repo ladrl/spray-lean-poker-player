@@ -1,13 +1,11 @@
-package com.example
+package leanPoker.scalaPlayer.domains
 
-trait CardEvaluater {
+object CardEvaluater {
+  import Server._
 
-  def evaluate(cards: List[Card]): List[Int]
-}
+  type Evaluater = List[Card] => List[Int]
 
-class TrippleEvaluater extends CardEvaluater {
-
-  override def evaluate(cards: List[Card]): List[Int] = {
+  val trippleEvaluater: Evaluater = { cards =>
     val cardOccurrences = cards.map(card => CardEvaluater.getValue(card.rank)).foldLeft(Map[Int, Int]() withDefaultValue 0) {
       (m, x) => m + (x -> (1 + m(x)))
     }
@@ -18,11 +16,8 @@ class TrippleEvaluater extends CardEvaluater {
       List(0)
     }
   }
-}
 
-class TwoPairEvaluater extends CardEvaluater {
-
-  override def evaluate(cards: List[Card]): List[Int] = {
+  val twoPairEvaluater: Evaluater = { cards =>
     val cardOccurrences = cards.map(card => CardEvaluater.getValue(card.rank)).foldLeft(Map[Int, Int]() withDefaultValue 0) {
       (m, x) => m + (x -> (1 + m(x)))
     }
@@ -33,11 +28,8 @@ class TwoPairEvaluater extends CardEvaluater {
       List(0)
     }
   }
-}
 
-class PairEvaluater extends CardEvaluater {
-
-  override def evaluate(cards: List[Card]): List[Int] = {
+  val pairEvaluater: Evaluater = { cards =>
     val cardOccurrences = cards.map(card => CardEvaluater.getValue(card.rank)).foldLeft(Map[Int, Int]() withDefaultValue 0) {
       (m, x) => m + (x -> (1 + m(x)))
     }
@@ -48,16 +40,10 @@ class PairEvaluater extends CardEvaluater {
       List(0)
     }
   }
-}
 
-class HighCardEvaluater extends CardEvaluater {
-
-  override def evaluate(cards: List[Card]): List[Int] = {
+  val highCardEvaluater: Evaluater = { cards =>
     1 :: cards.map(card => CardEvaluater.getValue(card.rank)).sorted(Ordering[Int].reverse)
   }
-}
-
-object CardEvaluater {
 
   def getValue(rank: String): Int = {
     rank match {
@@ -78,3 +64,4 @@ object Int {
     case _: java.lang.NumberFormatException => None
   }
 }
+

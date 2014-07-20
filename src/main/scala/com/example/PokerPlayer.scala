@@ -1,4 +1,4 @@
-package com.example
+package leanPoker.scalaPlayer
 
 import akka.actor.Actor
 import spray.routing._
@@ -12,6 +12,8 @@ import scala.util.Random
 import akka.actor.ActorRef
 import akka.util.Timeout
 import akka.actor.Props
+
+import domains.Server._
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
@@ -74,7 +76,7 @@ trait PokerPlayerTrait extends HttpService {
     }
 
   import spray.json._
-  import CardDeserializer._
+  import domains.Server.CardDeserializer._
   import scala.concurrent.duration._
   import akka.pattern.ask
   implicit val tmo = Timeout(1.seconds)  

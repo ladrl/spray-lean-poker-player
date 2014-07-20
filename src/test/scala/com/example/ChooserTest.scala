@@ -1,7 +1,9 @@
-package com.example
+package leanPoker.scalaPlayer
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+
+import domains.Server._
 
 class ChooserTest extends FlatSpec with Matchers {
   
