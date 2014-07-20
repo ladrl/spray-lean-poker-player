@@ -9,10 +9,17 @@ import DefaultJsonProtocol._
 import spray.routing.directives._
 import spray.httpx.SprayJsonSupport._
 import scala.util.Random
+import akka.actor.ActorRef
+import akka.util.Timeout
+import akka.actor.Props
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
-class PokerPlayerActor extends Actor with PokerPlayerTrait {
+
+object LeanPokerCommunicationActor {
+  def props(playerRef: ActorRef) = Props(new LeanPokerCommunicationActor(playerRef))
+}
+class LeanPokerCommunicationActor(val playerRef: ActorRef) extends Actor with PokerPlayerTrait {
 
   println("Version: " + getVersion)
 
@@ -38,6 +45,8 @@ class PokerPlayerActor extends Actor with PokerPlayerTrait {
 trait PokerPlayerTrait extends HttpService {
 
   def shutdown()
+  
+  val playerRef: ActorRef
 
   def getVersion(): String
 
@@ -66,13 +75,15 @@ trait PokerPlayerTrait extends HttpService {
 
   import spray.json._
   import CardDeserializer._
-
+  import scala.concurrent.duration._
+  import akka.pattern.ask
+  implicit val tmo = Timeout(1.seconds)  
   def bet_request(game_state: String) = {
     val parts = game_state.split("=", 2)
     println(parts)
     if (parts(0) == "game_state") {
-      val s = JsString(parts(1))
-      val game_state = s.convertTo[GameState]
+      val game_state = parts(1).parseJson.convertTo[GameState]
+      playerRef ? ('place_bet, game_state)
     }
     val rand = Random.nextInt()
 
