@@ -37,7 +37,7 @@ class LeanPokerCommunicationActor(val playerRef: ActorRef) extends Actor with Po
   }
 
   def getVersion() = {
-    "0.2.0"
+    "0.3.0"
   }
 }
 
