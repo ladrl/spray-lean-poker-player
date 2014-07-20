@@ -9,7 +9,7 @@ import CardDeserializer._
 class ParsingSpec extends FlatSpec with Matchers {
   "GameState serialization" should
     "have an empty game state" in {
-      JsString("""{
+      """{
 		  "players":[
 		    {
 		      "name":"Player 1",
@@ -37,7 +37,11 @@ class ParsingSpec extends FlatSpec with Matchers {
 		  "current_buy_in":0,
 		  "pot":0
 		}
-      """).convertTo[GameState] should be(GameState(List(), 0, 0, 0, List(), 0, 0))
+      """.parseJson.convertTo[GameState] should ===(
+          GameState(
+              Player("Player 1", 1000, "active", 0, Nil, "Version name 1", 0) ::
+              Player("Player 2", 1000, "active", 0, Nil, "Version name 2", 1) ::
+              Nil, 10 , 0, 0, List(), 0, 0))
     }
 
 }
